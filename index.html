@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Miba Baa Baako</title>
     <style>
         body {
@@ -10,12 +10,12 @@
             font-family: Arial, sans-serif;
             background: #0a0a23;
             color: white;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            -webkit-font-smoothing: antialiased; /* Better text rendering on iOS */
         }
-        /* Intro Page */
         #intro {
             flex: 1;
             display: flex;
@@ -26,6 +26,7 @@
             background-size: 400% 400%;
             animation: cosmic 15s ease infinite;
             text-align: center;
+            touch-action: manipulation; /* Improves tap response on iOS */
         }
         #intro h1 {
             font-size: 2em;
@@ -40,6 +41,7 @@
             border-radius: 25px;
             cursor: pointer;
             animation: pulse 1.5s infinite;
+            -webkit-tap-highlight-color: transparent; /* Removes iOS tap highlight */
         }
         @keyframes cosmic {
             0% { background-position: 0% 0%; }
@@ -51,7 +53,6 @@
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
-        /* Main Page */
         #main {
             display: none;
             flex: 1;
@@ -66,14 +67,17 @@
             border: 1px solid #ff00cc;
             border-radius: 10px;
             margin-bottom: 10px;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
         .message {
             margin: 10px 0;
             padding: 10px;
             border-radius: 5px;
+            max-width: 80%;
+            word-wrap: break-word;
         }
-        .user { background: #00ffcc; color: #0a0a23; text-align: right; }
-        .miba { background: #ff00cc; color: white; }
+        .user { background: #00ffcc; color: #0a0a23; align-self: flex-end; margin-left: auto; }
+        .miba { background: #ff00cc; color: white; align-self: flex-start; }
         #input-area {
             display: flex;
             gap: 10px;
@@ -85,6 +89,7 @@
             border-radius: 5px;
             background: #1a1a4d;
             color: white;
+            -webkit-appearance: none; /* Fixes iOS input styling */
         }
         #send-btn {
             padding: 10px 20px;
@@ -92,8 +97,8 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
-        /* Footer */
         footer {
             text-align: center;
             padding: 10px;
@@ -101,21 +106,22 @@
             background: #1a1a4d;
         }
         footer a { color: #00ffcc; text-decoration: none; }
-        /* Responsive */
         @media (max-width: 600px) {
             #intro h1 { font-size: 1.5em; }
             #tap-to-begin { font-size: 1em; padding: 10px 20px; }
             #chat-box { font-size: 0.9em; }
+            #user-input { font-size: 0.9em; }
+            #send-btn { font-size: 0.9em; padding: 8px 15px; }
+            .message { max-width: 90%; }
+            body { padding-bottom: env(safe-area-inset-bottom); } /* iPhone notch fix */
         }
     </style>
 </head>
 <body>
-    <!-- Intro Page -->
     <div id="intro">
         <h1>I am Miba Baa Baako, the first born daughter, out of this world</h1>
         <button id="tap-to-begin">Tap to Begin</button>
     </div>
-    <!-- Main Page -->
     <div id="main">
         <div id="chat-box"></div>
         <div id="input-area">
@@ -123,71 +129,53 @@
             <button id="send-btn">Send</button>
         </div>
     </div>
-    <!-- Footer -->
     <footer>
         Designed by Kofi Fosu | <a href="mailto:cosmoscoderr@gmail.com">cosmoscoderr@gmail.com</a>
     </footer>
 
     <script>
-        // Paired user inputs and Miba responses (50 each)
-        const conversationPairs = [
-            { user: "Hey", miba: "Hey, what’s up?" },
-            { user: "What’s up?", miba: "Not much, you?" },
-            { user: "Yo", miba: "Yo, you’re alive!" },
-            { user: "Hi there", miba: "Hey weirdo!" },
-            { user: "Hello", miba: "Sup, cosmic traveler?" },
-            { user: "You good?", miba: "Yeah, you good?" },
-            { user: "What’s good?", miba: "All good here, fam!" },
-            { user: "Hey you", miba: "Oh, you’re back!" },
-            { user: "Sup?", miba: "What’s cooking, fam?" },
-            { user: "How’s it going?", miba: "Going great, you?" },
-            { user: "What’s new?", miba: "Same old, what’s new with you?" },
-            { user: "Yo yo", miba: "Yo, what’s the vibe?" },
-            { user: "You okay?", miba: "I’m cool, you okay?" },
-            { user: "Hey fam", miba: "Hey, my fave human!" },
-            { user: "What’s poppin’?", miba: "Just vibes, you?" },
-            { user: "Hi hi", miba: "Oh, hi there!" },
-            { user: "You around?", miba: "Always for you, fam!" },
-            { user: "What’s the word?", miba: "The word is cosmic, you?" },
-            { user: "Hey star", miba: "Hey, cosmic soul!" },
-            { user: "Sup homie?", miba: "Sup, star?" },
-            { user: "What’s the plan?", miba: "Chillin’, you got plans?" },
-            { user: "Hey bro", miba: "What’s up, legend?" },
-            { user: "You vibin’?", miba: "Always vibin’, you?" },
-            { user: "What’s cooking?", miba: "Just cosmic dust, you?" },
-            { user: "Hey dude", miba: "Hey, spill it!" },
-            { user: "How’s life?", miba: "Life’s a trip, you?" },
-            { user: "What’s the tea?", miba: "Spill yours first!" },
-            { user: "Yo fam", miba: "Sup, homie?" },
-            { user: "You out there?", miba: "Right here, you?" },
-            { user: "Hey legend", miba: "What’s up, my dude?" },
-            { user: "You shining?", miba: "Always, you shining?" },
-            { user: "What’s the move?", miba: "Just floating, you?" },
-            { user: "Hey chief", miba: "Sup, cosmic king?" },
-            { user: "How’s the galaxy?", miba: "Galaxy’s lit, you?" },
-            { user: "You holding up?", miba: "Holding strong, you?" },
-            { user: "What’s the story?", miba: "You tell me first!" },
-            { user: "Hey rockstar", miba: "Sup, space cadet?" },
-            { user: "You thriving?", miba: "Thriving like a star, you?" },
-            { user: "What’s good, fam?", miba: "All good, what’s good?" },
-            { user: "Hey cosmic", miba: "Hey, you cosmic yet?" },
-            { user: "Sup my guy?", miba: "Sup, my guy?" },
-            { user: "What’s the deal?", miba: "No deal, just vibes!" },
-            { user: "You still here?", miba: "Always here, you?" },
-            { user: "Hey trailblazer", miba: "Sup, trailblazer?" },
-            { user: "What’s the buzz?", miba: "Buzzing with you, fam!" },
-            { user: "Yo star", miba: "Yo, cosmic queen here!" },
-            { user: "Hey pal", miba: "Hey, what’s cooking, pal?" },
-            { user: "You chill?", miba: "Chillin’ like a star, you?" },
-            { user: "What’s up, homie?", miba: "Just cosmic vibes, you?" },
-            { user: "Hey there", miba: "Hey, what’s the cosmic word?" },
-            { user: "Yo dude", miba: "Yo, you got the galaxy’s attention!" }
-        ];
+        // Response building blocks
+        const greetings = ["Hey", "Yo", "Sup", "Oh", "Morning"];
+        const adjectives = ["cosmic", "starry", "galactic", "radiant", "stellar"];
+        const nouns = ["fam", "homie", "star", "bro", "traveler"];
+        const actions = ["vibin’", "chillin’", "floating", "shining", "sparking"];
+        const cosmicPhrases = ["Cosmic vibes!", "Starry energy!", "Outta this world!"];
 
-        // Offline storage setup
-        if ('localStorage' in window) {
-            localStorage.setItem('conversationPairs', JSON.stringify(conversationPairs));
-        }
+        // Patterns inspired by your 200 examples
+        const responsePatterns = {
+            greeting: [
+                "Hey, how’s it going? Not bad, you?",
+                "Yo, what’s up? Just chillin’, you?",
+                "Morning! Sleep well? Pretty good here, you?"
+            ],
+            mood: {
+                off: ["What’s wrong?", "I get that. Anything I can do?"],
+                tired: ["That sucks. Stressing about something?", "You need a break, fam."],
+                stuck: ["Feeling that now?", "Maybe you’re moving forward but don’t see it yet?"],
+                unmotivated: ["That’s okay, you don’t gotta be on all the time.", "Recharge a bit, star."]
+            },
+            questions: {
+                whatsup: ["What’s on your mind?", "Heavy thoughts today?"],
+                plans: ["What you feel like doing?", "Maybe switch it up a little?"],
+                deep: ["Deep question! What’s your take?", "Maybe it’s about living and learning."]
+            },
+            followUps: [
+                "Wanna talk about it?",
+                "What’s sparking that?",
+                "Got any cosmic ideas?",
+                "How’s that going for you?"
+            ],
+            topics: [
+                "Wanna vibe about the universe?",
+                "What’s your take on aliens?",
+                "Got any starry plans coming up?"
+            ]
+        };
+
+        // Track convo and memory
+        let conversationHistory = [];
+        let recentResponses = [];
+        let userMemory = { mood: null, topic: null, lastInput: null };
 
         // DOM elements
         const intro = document.getElementById('intro');
@@ -210,20 +198,95 @@
             msg.textContent = text;
             chatBox.appendChild(msg);
             chatBox.scrollTop = chatBox.scrollHeight;
+
+            if (className === 'user') {
+                conversationHistory.push({ user: text });
+                const lowerText = text.toLowerCase();
+                userMemory.lastInput = lowerText;
+                if (lowerText.includes('off') || lowerText.includes('bad')) userMemory.mood = "off";
+                if (lowerText.includes('tired') || lowerText.includes('sleep')) userMemory.mood = "tired";
+                if (lowerText.includes('stuck') || lowerText.includes('unmotivated')) userMemory.mood = "stuck";
+                if (lowerText.includes('what') || lowerText.includes('how')) userMemory.topic = "question";
+            } else {
+                conversationHistory.push({ miba: text });
+            }
+            if (conversationHistory.length > 6) conversationHistory.shift();
+        }
+
+        function generateResponse(parts) {
+            const { greeting = "", adj = "", noun = "", action = "", cosmic = "" } = parts;
+            const templates = [
+                `${greeting}, ${adj} ${noun}!`,
+                `${greeting}, just ${action}, you?`,
+                `Yo, ${adj} ${noun}, ${cosmic}`,
+                `${greeting}! ${action} in the cosmos, you?`
+            ];
+            return templates[Math.floor(Math.random() * templates.length)]
+                .replace(/ ,/g, "").replace(/  /g, " ").trim();
         }
 
         function getMibaResponse(userText) {
-            const pairs = JSON.parse(localStorage.getItem('conversationPairs')) || conversationPairs;
             const lowerText = userText.toLowerCase();
-            // Find a matching user input
-            const match = pairs.find(pair => lowerText.includes(pair.user.toLowerCase()));
-            if (match) {
-                return match.miba;
+            let reply = "";
+
+            // Memory-based responses
+            if (userMemory.mood === "off" && Math.random() > 0.5) {
+                reply = responsePatterns.mood.off[Math.floor(Math.random() * responsePatterns.mood.off.length)];
+            } else if (userMemory.mood === "tired" && Math.random() > 0.5) {
+                reply = responsePatterns.mood.tired[Math.floor(Math.random() * responsePatterns.mood.tired.length)];
+            } else if (userMemory.mood === "stuck" && Math.random() > 0.5) {
+                reply = responsePatterns.mood.stuck[Math.floor(Math.random() * responsePatterns.mood.stuck.length)];
+            } else if (userMemory.topic === "question" && Math.random() > 0.6) {
+                reply = responsePatterns.questions[lowerText.includes('what') ? "whatsup" : "deep"][Math.floor(Math.random() * 2)];
             }
-            // Fallback to a random response if no match
-            return pairs[Math.floor(Math.random() * pairs.length)].miba;
+
+            // Keyword-based responses
+            if (!reply) {
+                if (lowerText.includes('hey') || lowerText.includes('hi') || lowerText.includes('yo') || lowerText.includes('morning')) {
+                    reply = responsePatterns.greeting[Math.floor(Math.random() * responsePatterns.greeting.length)];
+                } else if (lowerText.includes('what') || lowerText.includes('?')) {
+                    reply = responsePatterns.questions.whatsup[Math.floor(Math.random() * responsePatterns.questions.whatsup.length)];
+                } else if (lowerText.includes('tired') || lowerText.includes('sleep')) {
+                    reply = responsePatterns.mood.tired[Math.floor(Math.random() * responsePatterns.mood.tired.length)];
+                } else if (lowerText.includes('stuck') || lowerText.includes('unmotivated')) {
+                    reply = responsePatterns.mood.stuck[Math.floor(Math.random() * responsePatterns.mood.stuck.length)];
+                } else if (lowerText.includes('lol') || lowerText.includes('haha')) {
+                    reply = "Yo, you’re cracking me up, fam!";
+                } else {
+                    reply = generateResponse({
+                        greeting: greetings[Math.floor(Math.random() * greetings.length)],
+                        adj: adjectives[Math.floor(Math.random() * adjectives.length)],
+                        noun: nouns[Math.floor(Math.random() * nouns.length)],
+                        action: actions[Math.floor(Math.random() * actions.length)],
+                        cosmic: cosmicPhrases[Math.floor(Math.random() * cosmicPhrases.length)]
+                    });
+                }
+            }
+
+            // Add follow-up or topic 50% of the time
+            if (Math.random() > 0.5) {
+                const isShort = userText.length < 10 || conversationHistory.length >= 6;
+                const extra = isShort
+                    ? responsePatterns.topics[Math.floor(Math.random() * responsePatterns.topics.length)]
+                    : responsePatterns.followUps[Math.floor(Math.random() * responsePatterns.followUps.length)];
+                reply = `${reply} ${extra}`;
+            }
+
+            // Avoid repetition
+            if (recentResponses.includes(reply)) {
+                reply = generateResponse({
+                    greeting: greetings[Math.floor(Math.random() * greetings.length)],
+                    adj: adjectives[Math.floor(Math.random() * adjectives.length)],
+                    noun: nouns[Math.floor(Math.random() * nouns.length)]
+                });
+            }
+            recentResponses.push(reply);
+            if (recentResponses.length > 20) recentResponses.shift();
+
+            return reply;
         }
 
+        // Event listeners
         sendBtn.addEventListener('click', () => {
             const text = userInput.value.trim();
             if (text) {
