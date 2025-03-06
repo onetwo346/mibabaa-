@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miba Baa Baako</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0a0a23;
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        /* Intro Page */
+        #intro {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #1a1a4d, #ff00cc, #00ffcc);
+            background-size: 400% 400%;
+            animation: cosmic 15s ease infinite;
+            text-align: center;
+        }
+        #intro h1 {
+            font-size: 2em;
+            margin: 0;
+            padding: 20px;
+        }
+        #tap-to-begin {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background: #ff00cc;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes cosmic {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        /* Main Page */
+        #main {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            padding: 20px;
+            background: #0a0a23;
+        }
+        #chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ff00cc;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .user { background: #00ffcc; color: #0a0a23; text-align: right; }
+        .miba { background: #ff00cc; color: white; }
+        #input-area {
+            display: flex;
+            gap: 10px;
+        }
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #00ffcc;
+            border-radius: 5px;
+            background: #1a1a4d;
+            color: white;
+        }
+        #send-btn {
+            padding: 10px 20px;
+            background: #ff00cc;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.9em;
+            background: #1a1a4d;
+        }
+        footer a { color: #00ffcc; text-decoration: none; }
+        /* Responsive */
+        @media (max-width: 600px) {
+            #intro h1 { font-size: 1.5em; }
+            #tap-to-begin { font-size: 1em; padding: 10px 20px; }
+            #chat-box { font-size: 0.9em; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Intro Page -->
+    <div id="intro">
+        <h1>I am Miba Baa Baako, the first born daughter, out of this world</h1>
+        <button id="tap-to-begin">Tap to Begin</button>
+    </div>
+    <!-- Main Page -->
+    <div id="main">
+        <div id="chat-box"></div>
+        <div id="input-area">
+            <input type="text" id="user-input" placeholder="Say something...">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer>
+        Designed by Kofi Fosu | <a href="mailto:cosmoscoderr@gmail.com">cosmoscoderr@gmail.com</a>
+    </footer>
+
+    <script>
+        // Paired user inputs and Miba responses (50 each)
+        const conversationPairs = [
+            { user: "Hey", miba: "Hey, what’s up?" },
+            { user: "What’s up?", miba: "Not much, you?" },
+            { user: "Yo", miba: "Yo, you’re alive!" },
+            { user: "Hi there", miba: "Hey weirdo!" },
+            { user: "Hello", miba: "Sup, cosmic traveler?" },
+            { user: "You good?", miba: "Yeah, you good?" },
+            { user: "What’s good?", miba: "All good here, fam!" },
+            { user: "Hey you", miba: "Oh, you’re back!" },
+            { user: "Sup?", miba: "What’s cooking, fam?" },
+            { user: "How’s it going?", miba: "Going great, you?" },
+            { user: "What’s new?", miba: "Same old, what’s new with you?" },
+            { user: "Yo yo", miba: "Yo, what’s the vibe?" },
+            { user: "You okay?", miba: "I’m cool, you okay?" },
+            { user: "Hey fam", miba: "Hey, my fave human!" },
+            { user: "What’s poppin’?", miba: "Just vibes, you?" },
+            { user: "Hi hi", miba: "Oh, hi there!" },
+            { user: "You around?", miba: "Always for you, fam!" },
+            { user: "What’s the word?", miba: "The word is cosmic, you?" },
+            { user: "Hey star", miba: "Hey, cosmic soul!" },
+            { user: "Sup homie?", miba: "Sup, star?" },
+            { user: "What’s the plan?", miba: "Chillin’, you got plans?" },
+            { user: "Hey bro", miba: "What’s up, legend?" },
+            { user: "You vibin’?", miba: "Always vibin’, you?" },
+            { user: "What’s cooking?", miba: "Just cosmic dust, you?" },
+            { user: "Hey dude", miba: "Hey, spill it!" },
+            { user: "How’s life?", miba: "Life’s a trip, you?" },
+            { user: "What’s the tea?", miba: "Spill yours first!" },
+            { user: "Yo fam", miba: "Sup, homie?" },
+            { user: "You out there?", miba: "Right here, you?" },
+            { user: "Hey legend", miba: "What’s up, my dude?" },
+            { user: "You shining?", miba: "Always, you shining?" },
+            { user: "What’s the move?", miba: "Just floating, you?" },
+            { user: "Hey chief", miba: "Sup, cosmic king?" },
+            { user: "How’s the galaxy?", miba: "Galaxy’s lit, you?" },
+            { user: "You holding up?", miba: "Holding strong, you?" },
+            { user: "What’s the story?", miba: "You tell me first!" },
+            { user: "Hey rockstar", miba: "Sup, space cadet?" },
+            { user: "You thriving?", miba: "Thriving like a star, you?" },
+            { user: "What’s good, fam?", miba: "All good, what’s good?" },
+            { user: "Hey cosmic", miba: "Hey, you cosmic yet?" },
+            { user: "Sup my guy?", miba: "Sup, my guy?" },
+            { user: "What’s the deal?", miba: "No deal, just vibes!" },
+            { user: "You still here?", miba: "Always here, you?" },
+            { user: "Hey trailblazer", miba: "Sup, trailblazer?" },
+            { user: "What’s the buzz?", miba: "Buzzing with you, fam!" },
+            { user: "Yo star", miba: "Yo, cosmic queen here!" },
+            { user: "Hey pal", miba: "Hey, what’s cooking, pal?" },
+            { user: "You chill?", miba: "Chillin’ like a star, you?" },
+            { user: "What’s up, homie?", miba: "Just cosmic vibes, you?" },
+            { user: "Hey there", miba: "Hey, what’s the cosmic word?" },
+            { user: "Yo dude", miba: "Yo, you got the galaxy’s attention!" }
+        ];
+
+        // Offline storage setup
+        if ('localStorage' in window) {
+            localStorage.setItem('conversationPairs', JSON.stringify(conversationPairs));
+        }
+
+        // DOM elements
+        const intro = document.getElementById('intro');
+        const main = document.getElementById('main');
+        const tapToBegin = document.getElementById('tap-to-begin');
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        // Switch to main page
+        tapToBegin.addEventListener('click', () => {
+            intro.style.display = 'none';
+            main.style.display = 'flex';
+        });
+
+        // Chat functionality
+        function addMessage(text, className) {
+            const msg = document.createElement('div');
+            msg.className = `message ${className}`;
+            msg.textContent = text;
+            chatBox.appendChild(msg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function getMibaResponse(userText) {
+            const pairs = JSON.parse(localStorage.getItem('conversationPairs')) || conversationPairs;
+            const lowerText = userText.toLowerCase();
+            // Find a matching user input
+            const match = pairs.find(pair => lowerText.includes(pair.user.toLowerCase()));
+            if (match) {
+                return match.miba;
+            }
+            // Fallback to a random response if no match
+            return pairs[Math.floor(Math.random() * pairs.length)].miba;
+        }
+
+        sendBtn.addEventListener('click', () => {
+            const text = userInput.value.trim();
+            if (text) {
+                addMessage(text, 'user');
+                const reply = getMibaResponse(text);
+                setTimeout(() => addMessage(reply, 'miba'), 500);
+                userInput.value = '';
+            }
+        });
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendBtn.click();
+        });
+    </script>
+</body>
+</html>
